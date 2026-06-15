@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pomodoro Timer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <!-- Timer Display -->
+    <section class="timer-section">
+      <div class="timer-ring">
+        <span class="timer-text">25:00</span>
+      </div>
+      <p class="session-label">Focus</p>
+    </section>
+
+    <!-- Controls -->
+    <section class="controls">
+      <button class="btn btn-primary" id="btn-start">Start</button>
+      <button class="btn" id="btn-pause">Pause</button>
+      <button class="btn" id="btn-reset">Reset</button>
+    </section>
+
+    <!-- Mood Themes -->
+    <section class="theme-switcher">
+      <button class="theme-btn active" data-theme="focus">🎯 Focus</button>
+      <button class="theme-btn" data-theme="chill">😌 Chill</button>
+      <button class="theme-btn" data-theme="deep">🌙 Deep Work</button>
+    </section>
+
+    <!-- Streak -->
+    <section class="streak-section">
+      <span class="streak-label">Today</span>
+      <span class="streak-count" id="streak-display">—</span>
+    </section>
+
+    <!-- Sound -->
+    <section class="sound-section">
+      <button class="btn btn-icon" id="btn-mute">🔊</button>
+      <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="50">
+    </section>
+
+    <!-- Transition Confirmation Dialog (hidden by default) -->
+    <div class="dialog-overlay hidden" id="transition-dialog">
+      <div class="dialog">
+        <p class="dialog-message">Time's up! Start break?</p>
+        <div class="dialog-actions">
+          <button class="btn btn-primary" id="btn-confirm">Start Break</button>
+          <button class="btn" id="btn-skip">Skip</button>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="main.js"></script>
+</body>
+</html>

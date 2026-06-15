@@ -1,0 +1,492 @@
+/* === Fonts === */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@300;400&display=swap');
+
+/* === Reset === */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* === CSS Variables === */
+:root {
+  --bg: #0f0f0f;
+  --surface: #1a1a2e;
+  --text: #e0e0e0;
+  --text-secondary: #888;
+  --accent: #e63946;
+  --accent-glow: rgba(230, 57, 70, 0.15);
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 12px;
+  --radius-lg: 20px;
+  --transition-speed: 0.3s;
+}
+
+/* === Mood Theme Variables === */
+[data-theme="focus"] {
+  --accent: #e63946;
+  --accent-glow: rgba(230, 57, 70, 0.15);
+}
+
+[data-theme="chill"] {
+  --accent: #457b9d;
+  --accent-glow: rgba(69, 123, 157, 0.15);
+}
+
+[data-theme="deep"] {
+  --accent: #6a0572;
+  --accent-glow: rgba(106, 5, 114, 0.15);
+}
+
+/* === Body & Background === */
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* === Animated Blobs Background === */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, var(--accent-glow) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, var(--accent-glow) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 80%, var(--accent-glow) 0%, transparent 45%);
+  animation: blobFloat 12s ease-in-out infinite alternate;
+  z-index: 0;
+  transition: background var(--transition-speed) ease;
+}
+
+@keyframes blobFloat {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  33% {
+    transform: scale(1.15) translate(2%, -1%);
+  }
+  66% {
+    transform: scale(0.95) translate(-1%, 1%);
+  }
+  100% {
+    transform: scale(1.1) translate(1%, 2%);
+  }
+}
+
+/* === Main Container === */
+main {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  padding: 40px 24px;
+  width: 100%;
+  max-width: 420px;
+}
+
+/* === Timer Section === */
+.timer-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.timer-ring {
+  width: min(280px, 70vw);
+  height: min(280px, 70vw);
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.08);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow:
+    0 0 40px var(--accent-glow),
+    inset 0 0 40px rgba(0, 0, 0, 0.3);
+  transition: box-shadow var(--transition-speed) ease;
+}
+
+.timer-text {
+  font-family: var(--font-mono);
+  font-size: clamp(2.5rem, 10vw, 4rem);
+  font-weight: 300;
+  letter-spacing: 2px;
+  color: var(--text);
+  user-select: none;
+}
+
+.session-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  transition: color var(--transition-speed) ease;
+}
+
+/* === Controls === */
+.controls {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  justify-content: center;
+}
+
+.btn {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 12px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    background var(--transition-speed) ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+  user-select: none;
+  min-width: 80px;
+}
+
+.btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background: var(--accent);
+  opacity: 0.9;
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+/* === Theme Switcher === */
+.theme-switcher {
+  display: flex;
+  gap: 8px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.theme-btn {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  border: none;
+  border-radius: calc(var(--radius-lg) - 4px);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    background var(--transition-speed) ease,
+    color var(--transition-speed) ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.theme-btn:hover {
+  color: var(--text);
+}
+
+.theme-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* === Streak Section === */
+.streak-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.streak-label {
+  font-weight: 500;
+}
+
+.streak-count {
+  letter-spacing: 2px;
+}
+
+/* === Sound Section === */
+.sound-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+  padding: 8px 12px;
+  min-width: unset;
+  line-height: 1;
+  border-radius: var(--radius);
+}
+
+.volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.12);
+  outline: none;
+  width: 100px;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  transition: background var(--transition-speed) ease;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: none;
+}
+
+/* === Dialog Overlay === */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: opacity var(--transition-speed) ease;
+}
+
+.dialog-overlay.hidden {
+  display: none;
+}
+
+.dialog {
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  text-align: center;
+  max-width: 340px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.dialog-message {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* === Touch / Interactive Polish === */
+.btn,
+.theme-btn,
+.btn-icon {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* === Responsive === */
+
+/* Tablet & small desktop: tighten gap */
+@media (max-width: 768px) {
+  main {
+    gap: 24px;
+    padding: 32px 20px;
+  }
+}
+
+/* Phone portrait */
+@media (max-width: 480px) {
+  main {
+    padding: 24px 16px;
+    gap: 22px;
+  }
+
+  .timer-ring {
+    width: min(240px, 65vw);
+    height: min(240px, 65vw);
+  }
+
+  .controls {
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 14px 22px;
+    font-size: 0.9rem;
+    min-height: 48px;
+    min-width: 72px;
+  }
+
+  .theme-switcher {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .theme-btn {
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    min-height: 44px;
+  }
+
+  .btn-icon {
+    padding: 10px 14px;
+    min-height: 44px;
+  }
+
+  .volume-slider {
+    width: 80px;
+  }
+
+  .volume-slider::-webkit-slider-thumb {
+    width: 24px;
+    height: 24px;
+  }
+
+  .volume-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Small phone (iPhone SE 375px) */
+@media (max-width: 400px) {
+  main {
+    padding: 20px 12px;
+    gap: 18px;
+  }
+
+  .timer-ring {
+    width: min(200px, 60vw);
+    height: min(200px, 60vw);
+  }
+
+  .controls {
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    min-height: 44px;
+  }
+
+  .theme-btn {
+    padding: 8px 10px;
+    font-size: 0.72rem;
+    min-height: 40px;
+  }
+
+  .dialog {
+    padding: 24px 20px;
+    max-width: 300px;
+  }
+
+  .dialog-message {
+    font-size: 1rem;
+  }
+
+  .dialog-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Landscape phone: shrink ring to avoid scroll */
+@media (max-height: 500px) and (orientation: landscape) {
+  main {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    padding: 12px 16px;
+  }
+
+  .timer-ring {
+    width: 120px;
+    height: 120px;
+  }
+
+  .timer-text {
+    font-size: 1.6rem;
+  }
+
+  .session-label {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+  }
+
+  .controls {
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    min-height: 36px;
+  }
+
+  .theme-switcher,
+  .streak-section,
+  .sound-section {
+    order: 99;
+  }
+}
+
+/* Safe area padding for notched phones */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
