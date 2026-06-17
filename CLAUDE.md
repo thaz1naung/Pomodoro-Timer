@@ -21,6 +21,30 @@
 - Apply its design tokens, spacing rules, typography, and component patterns
 - Every UI component must pass the plugin's quality standard before shipping
 
+### Project Wiki (`wiki/`)
+- Location: `wiki/` directory — a persistent, structured knowledge base for this project
+- Built following the `llm-wiki.md` methodology: the LLM incrementally maintains interlinked markdown pages
+- **Read `wiki/index.md` first** before any session — it catalogs all pages by category (sources, entities, concepts, synthesis)
+- Pages to read for context: `wiki/architecture.md`, `wiki/design-decisions.md`, `wiki/project-overview.md`
+
+#### Wiki Operations (apply on every session)
+
+**Before making changes:**
+- Read `wiki/index.md` → find relevant entity/concept pages → read them for context
+- Read `wiki/log.md` to see what changed recently
+
+**After making changes:**
+- **Ingest**: Update affected wiki pages — if you changed a feature, update its entity page. If you added a new pattern, create a concept page. Update the index. Append to the log.
+- **Lint** (periodically, or when asked): Health-check the wiki. Look for:
+  - Contradictions between pages (e.g., a feature described differently in two places)
+  - Stale claims superseded by recent changes
+  - Orphan pages with no inbound links from other wiki pages
+  - Important concepts mentioned in entity pages but lacking their own page
+  - Missing cross-references between related pages
+
+**Query workflow:**
+- When asked a question about this project → search `wiki/` for relevant pages → synthesize answer with citations to wiki pages → file valuable answers back into the wiki as new pages
+
 ---
 
 ## ⚡ GSD (Get Shit Done) Workflow Rules
