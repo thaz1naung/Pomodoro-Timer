@@ -13,7 +13,7 @@ A focused, calm Pomodoro timer built with vanilla HTML, CSS, and JS. No framewor
 
 ## How to run
 
-Open `index.html` in any browser. That's it.
+Open `https://pomodoro-vibes.vercel.app` in any browser. That's it.
 
 ## Deploy
 
