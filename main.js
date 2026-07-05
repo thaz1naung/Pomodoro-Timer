@@ -33,6 +33,8 @@ const streakDisplay = document.getElementById('streak-display');
 const transitionDialog = document.getElementById('transition-dialog');
 const btnConfirm = document.getElementById('btn-confirm');
 const btnSkip = document.getElementById('btn-skip');
+const taskInput = document.getElementById('task-input');
+const taskLabel = document.getElementById('task-label');
 
 /* === Format === */
 function formatTime(seconds) {
@@ -59,6 +61,21 @@ function updateMuteButton() {
   btnMute.textContent = STATE.muted ? '🔇' : '🔊';
 }
 
+/* === Task Label === */
+function showTaskLabel() {
+  const text = taskInput.value.trim();
+  taskLabel.textContent = text || '';
+  taskInput.classList.add('hidden');
+  taskLabel.classList.toggle('hidden', !text);
+}
+
+function clearTaskLabel() {
+  taskInput.value = '';
+  taskInput.classList.remove('hidden');
+  taskLabel.classList.add('hidden');
+  taskLabel.textContent = '';
+}
+
 /* === Timer core === */
 function tick() {
   if (STATE.timeLeft <= 0) return;
@@ -72,6 +89,7 @@ function tick() {
 function start() {
   if (STATE.isRunning) return;
   STATE.isRunning = true;
+  showTaskLabel();
   STATE.intervalId = setInterval(tick, 1000);
 }
 
@@ -85,6 +103,7 @@ function reset() {
   pause();
   STATE.timeLeft = DURATIONS[STATE.mode];
   STATE.totalTime = STATE.timeLeft;
+  clearTaskLabel();
   updateDisplay();
 }
 

@@ -98,6 +98,55 @@ main {
   max-width: 420px;
 }
 
+/* === Task Label === */
+.task-section {
+  width: 100%;
+  text-align: center;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.task-input {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 10px 16px;
+  width: 100%;
+  max-width: 320px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  text-align: center;
+  outline: none;
+  transition: border-color var(--transition-speed) ease;
+}
+
+.task-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.task-input:focus {
+  border-color: var(--accent);
+}
+
+.task-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 0.5px;
+}
+
+.task-label.hidden {
+  display: none;
+}
+
+.task-input.hidden {
+  display: none;
+}
+
 /* === Timer Section === */
 .timer-section {
   display: flex;
