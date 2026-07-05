@@ -1,10 +1,14 @@
 # Sound Engine
 
-> Entity — timer completion chime. Source: `main.js` lines 151–179 (see [[source-main-js]])
+> Entity — timer completion chime + background sounds. Source: `main.js` (see [[source-main-js]])
 
 ## What It Is
 
-A Web Audio API–based chime that plays when the timer reaches zero. Generates a C major chord (C5-E5-G5) using three sine-wave oscillators — zero external audio files.
+Web Audio API–based sound system with two parts:
+1. **Chime** — C major chord (C5-E5-G5) plays when the timer reaches zero
+2. **Background sounds** — continuous ambient audio (Rain / White Noise / Lofi), toggleable
+
+Zero external audio files — everything is synthesized in real-time.
 
 ## Architecture
 
@@ -54,6 +58,31 @@ Each oscillator:
 - `webkitAudioContext` fallback for older Safari
 - No `Audio` element, no `<audio>` tag, no MP3/WAV files — pure synthesis
 
+## Background Sounds
+
+Three ambient sound options, toggleable via buttons near the volume slider. One plays at a time. Volume follows the existing slider.
+
+### Sound Generation
+
+| Sound | Technique | Key Parameters |
+|-------|-----------|----------------|
+| **Rain** | Brown noise → lowpass filter | Filter frequency: 800Hz |
+| **White Noise** | Raw noise buffer | No filtering |
+| **Lofi** | Noise → lowpass filter → LFO modulation | Filter: 400Hz, LFO: 0.15Hz, LFO gain: 100Hz |
+
+### Architecture
+
+- `createNoiseBuffer(ctx)` — 2-second white noise buffer (random samples)
+- `createBrownNoise(ctx)` — 2-second brown noise buffer (random walk)
+- `startBgSound(type)` — stops any current sound, creates new source + gain + optional filter/LFO
+- `stopBgSound()` — stops source and LFO, nulls reference
+- `toggleBgSound(type)` — if same type is playing, stops it; otherwise starts it
+- `updateBgSoundVolume()` — syncs gain with `STATE.volume * 0.35`
+
+### Volume
+
+Background sound volume is 35% of the slider value (`STATE.volume * 0.35`), keeping it ambient and non-intrusive. Updated in real-time via the volume slider's `input` event.
+
 ## Why Web Audio API
 
 Per [[design-decisions]], the project has a hard rule: **no external audio files**. Web Audio API was chosen because:
@@ -64,7 +93,8 @@ Per [[design-decisions]], the project has a hard rule: **no external audio files
 
 ## Limitations
 
-- **No sound customization**: Fixed C-E-G chord, fixed timing. User can only control volume and mute.
+- **Chime**: Fixed C-E-G chord, fixed timing. User can only control volume and mute.
+- **Background sounds**: Fixed filter frequencies. No user customization beyond on/off and volume.
 - **No ticking sound**: Only plays on timer completion, not during countdown. This is by design (focus-oriented, minimal distraction).
 - **AudioContext suspension**: On some mobile browsers, the AudioContext may be in a `suspended` state until user gesture. The first chime may be silent if the user hasn't interacted — resolved on the next interaction.
 

@@ -32,10 +32,19 @@ Single source of truth for all mutable application state. Lives in the global sc
 - `formatTime(seconds)` — converts seconds to `MM:SS` string with zero-padding
 - `updateDisplay()` — syncs timer text, session label, document title, and streak display to DOM
 - `tick()` — decrements `timeLeft`, calls `updateDisplay()`, triggers `timerComplete()` at zero
-- `start()` — begins the `setInterval` tick loop (1s interval)
+- `start()` — begins the `setInterval` tick loop (1s interval), requests notification permission on first click
 - `pause()` — clears the interval, nulls the handle
-- `reset()` — pauses and resets `timeLeft` to `DURATIONS[mode]`
+- `applyDurations()` — reads custom duration inputs and updates `DURATIONS` object
+- `reset()` — pauses, applies custom durations, resets `timeLeft`, clears task label
 - `setMode(mode)` — switches mode and resets timer
+
+### Task Label
+- `showTaskLabel()` — hides input, shows label text as plain text while timer runs
+- `clearTaskLabel()` — clears input, restores input visibility on reset
+
+### Notifications
+- `requestNotifPermission()` — requests browser notification permission on first Start click
+- `notify(title, body)` — sends notification only when page is not focused
 
 ### Timer Completion (→ [[transition-dialog]])
 - `timerComplete()` — pauses timer, plays chime, increments streak if focus session ended, shows transition dialog
@@ -48,6 +57,19 @@ Single source of truth for all mutable application state. Lives in the global sc
 - `getAudioContext()` — lazily creates and caches an `AudioContext` (browser policy compliance)
 - `playChime()` — schedules a C-E-G major chord using three oscillators with exponential decay (0.6s per note, 0.15s stagger)
 - Volume and mute controlled via `STATE.muted` and `STATE.volume` — no separate functions
+
+### Background Sound (→ [[sound-engine]])
+- `createNoiseBuffer(ctx)` — generates a 2-second white noise buffer
+- `createBrownNoise(ctx)` — generates a 2-second brown noise buffer (random walk)
+- `startBgSound(type)` — starts one of three background sounds: rain (brown noise + lowpass), white noise, lofi (noise + lowpass + LFO modulation)
+- `stopBgSound()` — stops and cleans up the current background sound
+- `toggleBgSound(type)` — toggles a background sound on/off (one at a time)
+- `updateBgSoundVolume()` — syncs background sound volume with the slider
+
+### Dark / Light Mode
+- `setMode(mode)` — sets `data-mode` attribute on `<body>`, updates button icon, saves to localStorage
+- `toggleMode()` — switches between dark and light
+- `loadMode()` — restores saved mode from localStorage on init
 
 ### Streak (→ [[streak-persistence]])
 - `saveStreak()` — writes `completedPomodoros` to localStorage keyed by today's ISO date
@@ -63,15 +85,18 @@ All wired at the bottom of the file via `addEventListener`:
 - **Start/Pause/Reset** buttons → `start()`, `pause()`, `reset()`
 - **Confirm/Skip** dialog buttons → `confirmTransition()`, `skipTransition()`
 - **Mute button** → toggles `STATE.muted`, updates button text (🔊/🔇)
-- **Volume slider** → converts 0–100 range to 0–1 for `STATE.volume`
+- **Volume slider** → converts 0–100 range to 0–1 for `STATE.volume`, updates bg sound volume
 - **Theme buttons** → `setTheme()` with the button's `data-theme` value
+- **Mode toggle** → `toggleMode()` switches dark/light
+- **Background sound buttons** → `toggleBgSound()` with the button's `data-sound` value
 
 ## Initialization
 On script load (bottom of file):
 1. Set default theme: `data-theme="focus"` on `<body>`
-2. Load streak from localStorage
-3. Update display (timer text, label, title, streak)
-4. Update mute button icon
+2. Load dark/light mode from localStorage
+3. Load streak from localStorage
+4. Update display (timer text, label, title, streak)
+5. Update mute button icon
 
 ## Related Pages
 - [[source-index-html]] — DOM elements this file operates on

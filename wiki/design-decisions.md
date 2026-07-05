@@ -114,14 +114,21 @@ Every decision below follows the GSD decision rule: **"Does the user need this r
 | Feature | Why Skipped |
 |---------|-------------|
 | Task list / todo integration | Not in requirements |
-| Customizable durations | Not in requirements — 25/5/15 only |
-| Notification popup | Not in requirements — tab title update is sufficient |
 | Data export | Not in requirements |
 | Keyboard shortcuts | Not in requirements |
-| Dark/light mode toggle | Always dark by design (focus-oriented) |
 | Service worker / PWA | Not in requirements |
 | Multiple timer presets | Not in requirements |
 | Statistics / history | Streak counter only — per requirements |
+
+## What Was Added Later (User Feedback)
+
+| Feature | Why Added |
+|---------|-----------|
+| Custom durations | User interview: 25 min too long for some users |
+| Dark/light mode | User interview: dark mode uncomfortable for daytime use |
+| Task label input | User interview: no way to track what you're working on |
+| Background sounds | Enhancement: ambient focus audio (Rain / White Noise / Lofi) |
+| Browser notifications | Enhancement: alert when timer ends if tab isn't focused |
 
 ## Related Pages
 - [[source-CLAUDE-md]] — the rules and constraints these decisions follow

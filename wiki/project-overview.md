@@ -8,21 +8,26 @@ A **single-page Pomodoro timer** built with vanilla HTML, CSS, and JavaScript. Z
 
 ## What It Does
 
-1. **25-minute Focus sessions** — countdown timer with large monospace display
-2. **Auto-transitions** — after focus: 5 min short break (or 15 min long break after every 4th pomodoro)
-3. **Confirmation dialog** — user must acknowledge before next session starts
-4. **3 mood themes** — Focus (red-orange), Chill (soft blue), Deep Work (deep purple) with smooth CSS transitions
-5. **Daily streak counter** — 🍅 icons for completed sessions, persisted in localStorage, resets at midnight
-6. **Web Audio chime** — C major chord on timer completion, with volume slider and mute toggle
-7. **Animated background** — Subtle floating blob gradient, per-theme colored
-8. **Fully responsive** — iPhone SE to desktop, including landscape phones and notched devices
+1. **Customizable Focus sessions** — countdown timer with large monospace display (default 25 min, adjustable)
+2. **Custom durations** — Focus / Short Break / Long Break lengths adjustable via number inputs
+3. **Auto-transitions** — after focus: short break (or long break after every 4th pomodoro)
+4. **Confirmation dialog** — user must acknowledge before next session starts
+5. **Task label** — text input to track what you're working on, shown while timer runs
+6. **3 mood themes** — Focus (red-orange), Chill (soft blue), Deep Work (deep purple) with smooth CSS transitions
+7. **Dark / light mode** — toggle between dark (default) and light, persisted in localStorage
+8. **Daily streak counter** — 🍅 icons for completed sessions, persisted in localStorage, resets at midnight
+9. **Web Audio chime** — C major chord on timer completion, with volume slider and mute toggle
+10. **Background sounds** — Rain / White Noise / Lofi ambient audio, toggleable, volume follows slider
+11. **Browser notifications** — alerts when timer ends if tab isn't focused
+12. **Animated background** — Subtle floating blob gradient, per-theme colored
+13. **Fully responsive** — iPhone SE to desktop, including landscape phones and notched devices
 
 ## Technical Architecture
 
 ```
-index.html (58 lines)  ── DOM structure
-style.css  (493 lines) ── Dark theme, CSS variables, animations, responsive
-main.js   (238 lines)  ── Timer logic, sound, streak, themes
+index.html (86 lines)  ── DOM structure
+style.css  (630 lines) ── Dark/light theme, CSS variables, animations, responsive
+main.js   (415 lines)  ── Timer logic, sound, streak, themes, bg sounds, notifications
 ```
 
 No build tools. No package.json. No node_modules. Open `index.html` — that's the entire development workflow.
@@ -56,9 +61,9 @@ For full architecture details: [[architecture]]
 
 | File | Role | Lines |
 |------|------|-------|
-| `index.html` | DOM structure | 58 |
-| `style.css` | All visual styling | 493 |
-| `main.js` | All application logic | 238 |
+| `index.html` | DOM structure | 86 |
+| `style.css` | All visual styling | 630 |
+| `main.js` | All application logic | 415 |
 | `CLAUDE.md` | LLM instruction schema | 216 |
 | `llm-wiki.md` | Knowledge base methodology | 76 |
 | `vercel.json` | Vercel deployment config | 3 |
@@ -66,7 +71,9 @@ For full architecture details: [[architecture]]
 | `.claude/agents/*.md` | 4 agent definitions | ~70 total |
 | `.claude/skills/gsd-skill.md` | GSD workflow skill | 15 |
 | `slides/pitch.md` | PechaKucha presentation | 59 |
-| `wiki/` | **This knowledge base** | **17 files** |
+| `slides/tech-stack.md` | Tech stack Marp deck | 89 |
+| `feedback/interview-notes.md` | User interview notes | 32 |
+| `wiki/` | **This knowledge base** | **20+ files** |
 
 ## Key Constraints Respected
 
@@ -81,12 +88,9 @@ For full architecture details: [[architecture]]
 
 Per [[design-decisions#What Was Deliberately NOT Built]]:
 - Task list integration
-- Customizable durations
-- Notification popups
 - Data export / statistics
 - Keyboard shortcuts
 - PWA / service worker
-- Dark/light mode toggle (always dark by design)
 
 ## Deployed At
 

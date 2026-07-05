@@ -18,7 +18,7 @@ isRunning: boolean
 intervalId: number | null
 ```
 
-Durations per mode: **Focus** 25 min (1500s), **Short Break** 5 min (300s), **Long Break** 15 min (900s).
+Durations per mode: **Focus** 25 min (1500s), **Short Break** 5 min (300s), **Long Break** 15 min (900s). These are defaults — users can customize via the duration inputs. Custom values are read from the DOM only on `reset()`, never mid-session.
 
 ## Tick Loop
 
@@ -41,9 +41,17 @@ pause() → clearInterval → STATE.intervalId = null
 
 Also calls `updateStreakDisplay()` (see [[streak-persistence]]).
 
+## Custom Durations
+
+Three number inputs (`#duration-focus`, `#duration-short`, `#duration-long`) let users set custom session lengths. `applyDurations()` reads these values and updates the `DURATIONS` object. This is called inside `reset()`, so custom values only take effect when the timer is reset — never while running.
+
+## Task Label
+
+A text input (`#task-input`) above the timer lets users label what they're working on. When the timer starts, `showTaskLabel()` hides the input and displays the text as a plain `<span>`. On reset, `clearTaskLabel()` clears the input and restores it.
+
 ## Mode Transitions
 
-`setMode(mode)` → `reset()` → `timeLeft = DURATIONS[mode]`
+`setMode(mode)` → `reset()` → `applyDurations()` → `timeLeft = DURATIONS[mode]`
 
 Modes form a cycle:
 ```

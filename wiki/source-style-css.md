@@ -45,6 +45,20 @@ Each mood sets `--accent` and `--accent-glow` via `[data-theme="..."]` selectors
 
 All themed elements reference `var(--accent)` / `var(--accent-glow)`, so switching `data-theme` on `<body>` cascades instantly — no JS class manipulation needed.
 
+### Light Mode Variables
+Light mode overrides via `[data-mode="light"]` on `<body>`:
+
+| Variable | Dark (default) | Light |
+|----------|---------------|-------|
+| `--bg` | `#0f0f0f` | `#f5f5f5` |
+| `--surface` | `#1a1a2e` | `#ffffff` |
+| `--text` | `#e0e0e0` | `#1a1a2e` |
+| `--text-secondary` | `#888` | `#555` |
+| `--border` | `rgba(255,255,255,0.08)` | `rgba(0,0,0,0.1)` |
+| `--accent-glow` | per-theme (0.15 opacity) | per-theme (0.08 opacity) |
+
+All hardcoded border colors use `var(--border)`, so light/dark switching requires no class changes.
+
 ## Layout Architecture
 
 - **Body**: flexbox centering, `min-height: 100vh`, `overflow-x: hidden`
@@ -70,7 +84,25 @@ All themed elements reference `var(--accent)` / `var(--accent-glow)`, so switchi
 - Pill container: dark surface, large border-radius (`20px`), 4px padding
 - Inactive pills: transparent background, secondary text
 - Active pill (`.theme-btn.active`): accent fill, white text
+- Includes `#btn-mode` (☀️/🌙) for dark/light toggle
 - All transitions use `--transition-speed` for smooth theme changes
+
+### Task Label (`.task-section`)
+- Centered flex container, full width
+- `.task-input`: centered text input, surface background, accent border on focus
+- `.task-label`: plain text display when timer is running
+- `.hidden` class toggles between input and label display
+
+### Duration Settings (`.duration-section`)
+- 3 inline groups (Focus / Short / Long), each with a label and number input
+- `.duration-input`: monospace font, 64px wide, hidden spinners (`-moz-appearance: textfield`)
+- Values read on reset only, not mid-session
+
+### Background Sound Buttons (`.bg-sound-group`)
+- 3 small pill buttons below the volume slider
+- `.bg-sound-btn`: compact (0.7rem font, 5px padding), border + transparent bg
+- Active state (`.bg-sound-btn.active`): accent fill, white text
+- Same touch polish as other interactive elements
 
 ### Animated Background
 - `body::before` pseudo-element with 3 radial-gradient ellipses using `--accent-glow`
