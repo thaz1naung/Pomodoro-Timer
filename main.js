@@ -246,17 +246,102 @@ function createNoiseBuffer(ctx) {
   return buffer;
 }
 
-function createBrownNoise(ctx) {
-  const bufferSize = ctx.sampleRate * 2;
-  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-  const data = buffer.getChannelData(0);
-  let lastOut = 0;
-  for (let i = 0; i < bufferSize; i++) {
-    const white = Math.random() * 2 - 1;
-    lastOut = (lastOut + 0.02 * white) / 1.02;
-    data[i] = lastOut * 3.5;
+function startRainDrops(ctx, gain) {
+  // Individual rain drops: schedule random short clicks with filtered noise
+  const masterGain = ctx.createGain();
+  masterGain.gain.value = 1;
+  masterGain.connect(gain);
+
+  const buf = createNoiseBuffer(ctx);
+  const baseSrc = ctx.createBufferSource();
+  baseSrc.buffer = buf;
+  baseSrc.loop = true;
+
+  const hipass = ctx.createBiquadFilter();
+  hipass.type = 'highpass';
+  hipass.frequency.value = 2000;
+  baseSrc.connect(hipass);
+
+  // Random gain modulation for individual drops
+  const dropGain = ctx.createGain();
+  dropGain.gain.value = 0;
+  hipass.connect(dropGain);
+  dropGain.connect(masterGain);
+
+  // Schedule random drops
+  let dropTimeout = null;
+  function scheduleDrop() {
+    if (!bgSound || bgSound.type !== 'rain') return;
+    const now = ctx.currentTime;
+    const dropDuration = 0.02 + Math.random() * 0.04;
+    const dropVol = 0.15 + Math.random() * 0.45;
+    dropGain.gain.setValueAtTime(0, now);
+    dropGain.gain.linearRampToValueAtTime(dropVol, now + dropDuration * 0.3);
+    dropGain.gain.exponentialRampToValueAtTime(0.001, now + dropDuration);
+    dropTimeout = setTimeout(scheduleDrop, 30 + Math.random() * 80);
   }
-  return buffer;
+
+  baseSrc.start();
+  scheduleDrop();
+  return { source: baseSrc, gain: masterGain, _timer: dropTimeout };
+}
+
+function startBeach(ctx, gain) {
+  // Ocean waves: low brown noise with LFO amplitude modulation
+  const buf = createNoiseBuffer(ctx);
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  src.loop = true;
+
+  const lowpass = ctx.createBiquadFilter();
+  lowpass.type = 'lowpass';
+  lowpass.frequency.value = 300;
+
+  const waveGain = ctx.createGain();
+  waveGain.gain.value = 0.5;
+  lowpass.connect(waveGain);
+  waveGain.connect(gain);
+
+  // LFO for wave rhythm
+  const lfo = ctx.createOscillator();
+  const lfoGain = ctx.createGain();
+  lfo.type = 'sine';
+  lfo.frequency.value = 0.12;
+  lfoGain.gain.value = 0.35;
+  lfo.connect(lfoGain);
+  lfoGain.connect(waveGain.gain);
+
+  src.connect(lowpass);
+  lfo.start();
+  src.start();
+
+  // Seagull cries: periodic sine chirps
+  let seagullInterval = null;
+  function scheduleSeagull() {
+    if (!bgSound || bgSound.type !== 'beach') return;
+    const now = ctx.currentTime;
+    const baseFreq = 1800 + Math.random() * 600;
+    const cryDuration = 0.15 + Math.random() * 0.25;
+
+    const osc = ctx.createOscillator();
+    const sg = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(baseFreq, now);
+    osc.frequency.linearRampToValueAtTime(baseFreq * 1.3, now + cryDuration * 0.5);
+    osc.frequency.linearRampToValueAtTime(baseFreq * 0.9, now + cryDuration);
+    sg.gain.setValueAtTime(0, now);
+    sg.gain.linearRampToValueAtTime(STATE.volume * 0.08, now + 0.02);
+    sg.gain.exponentialRampToValueAtTime(0.001, now + cryDuration);
+    osc.connect(sg);
+    sg.connect(gain);
+    osc.start(now);
+    osc.stop(now + cryDuration + 0.01);
+
+    seagullInterval = setTimeout(scheduleSeagull, 4000 + Math.random() * 8000);
+  }
+
+  scheduleSeagull();
+  return { source: src, gain, filter: lowpass, lfo, lfoGain, _timer: seagullInterval };
 }
 
 function startBgSound(type) {
@@ -267,25 +352,11 @@ function startBgSound(type) {
   gain.connect(ctx.destination);
 
   if (type === 'rain') {
-    const buf = createBrownNoise(ctx);
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-    src.loop = true;
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 800;
-    src.connect(filter);
-    filter.connect(gain);
-    src.start();
-    bgSound = { type, source: src, gain, filter };
-  } else if (type === 'white') {
-    const buf = createNoiseBuffer(ctx);
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-    src.loop = true;
-    src.connect(gain);
-    src.start();
-    bgSound = { type, source: src, gain };
+    const rain = startRainDrops(ctx, gain);
+    bgSound = { type, source: rain.source, gain: rain.gain, _timer: rain._timer };
+  } else if (type === 'beach') {
+    const beach = startBeach(ctx, gain);
+    bgSound = { type, source: beach.source, gain, filter: beach.filter, lfo: beach.lfo, lfoGain: beach.lfoGain, _timer: beach._timer };
   } else if (type === 'lofi') {
     const buf = createNoiseBuffer(ctx);
     const src = ctx.createBufferSource();
@@ -313,6 +384,7 @@ function stopBgSound() {
   try {
     bgSound.source.stop();
     if (bgSound.lfo) bgSound.lfo.stop();
+    if (bgSound._timer) clearTimeout(bgSound._timer);
   } catch (e) { /* already stopped */ }
   bgSound = null;
 }
