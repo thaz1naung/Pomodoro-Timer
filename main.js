@@ -142,7 +142,7 @@ function reset() {
   updateDisplay();
 }
 
-function setMode(mode) {
+function setTimerMode(mode) {
   STATE.mode = mode;
   reset();
 }
@@ -186,7 +186,7 @@ function hideTransitionDialog() {
 
 function confirmTransition() {
   if (pendingTransition) {
-    setMode(pendingTransition);
+    setTimerMode(pendingTransition);
     hideTransitionDialog();
     start();
   }
@@ -194,7 +194,7 @@ function confirmTransition() {
 
 function skipTransition() {
   if (pendingTransition) {
-    setMode(pendingTransition);
+    setTimerMode(pendingTransition);
     STATE.timeLeft = DURATIONS[pendingTransition];
     STATE.totalTime = STATE.timeLeft;
     hideTransitionDialog();

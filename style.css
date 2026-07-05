@@ -308,6 +308,34 @@ main {
   border-color: var(--accent);
 }
 
+/* === Dark / Light Mode Toggle === */
+.mode-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 50;
+  font-size: 1.2rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background var(--transition-speed) ease,
+    transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.mode-toggle:hover {
+  transform: scale(1.1);
+}
+
 /* === Theme Switcher === */
 .theme-switcher {
   display: flex;
