@@ -246,49 +246,63 @@ function createNoiseBuffer(ctx) {
   return buffer;
 }
 
-function startRainDrops(ctx, gain) {
-  // Individual rain drops: each drop is its own short noise burst
+function startBirds(ctx, gain) {
+  // Bird chirps: layered sine wave chirps with frequency sweeps
   const masterGain = ctx.createGain();
   masterGain.gain.value = 1;
   masterGain.connect(gain);
 
-  function playDrop() {
-    if (!bgSound || bgSound.type !== 'rain') return;
-    const now = ctx.currentTime;
-    const dropDur = 0.015 + Math.random() * 0.035;
+  let timers = [];
 
-    // Short noise burst for this drop
-    const sr = ctx.sampleRate;
-    const len = Math.ceil(sr * dropDur);
-    const buf = ctx.createBuffer(1, len, sr);
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+  function chirp(freqLow, freqHigh, vol, startDelay) {
+    if (!bgSound || bgSound.type !== 'birds') return;
+    const now = ctx.currentTime + startDelay;
+    const dur = 0.08 + Math.random() * 0.12;
 
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-
-    // Filter to sound like a drop (bandpass)
-    const bp = ctx.createBiquadFilter();
-    bp.type = 'bandpass';
-    bp.frequency.value = 3000 + Math.random() * 3000;
-    bp.Q.value = 0.5 + Math.random();
-
+    const osc = ctx.createOscillator();
     const env = ctx.createGain();
-    const vol = 0.3 + Math.random() * 0.5;
-    env.gain.setValueAtTime(vol, now);
-    env.gain.exponentialRampToValueAtTime(0.001, now + dropDur);
+    osc.type = 'sine';
 
-    src.connect(bp);
-    bp.connect(env);
+    // Quick sweep: low → high → low
+    osc.frequency.setValueAtTime(freqLow, now);
+    osc.frequency.linearRampToValueAtTime(freqHigh, now + dur * 0.4);
+    osc.frequency.linearRampToValueAtTime(freqLow, now + dur);
+
+    // Gentle envelope
+    env.gain.setValueAtTime(0, now);
+    env.gain.linearRampToValueAtTime(vol, now + dur * 0.15);
+    env.gain.setValueAtTime(vol, now + dur * 0.5);
+    env.gain.exponentialRampToValueAtTime(0.001, now + dur);
+
+    osc.connect(env);
     env.connect(masterGain);
-    src.start(now);
-    src.stop(now + dropDur + 0.01);
-
-    setTimeout(playDrop, 20 + Math.random() * 70);
+    osc.start(now);
+    osc.stop(now + dur + 0.01);
   }
 
-  playDrop();
-  return { source: { stop() {} }, gain: masterGain, _timer: null };
+  function scheduleChirps() {
+    if (!bgSound || bgSound.type !== 'birds') return;
+
+    // Main bird: 800→1200→800Hz
+    chirp(800, 1200, 0.15, 0);
+
+    // Occasional second bird at different frequency: 600→900→600Hz
+    if (Math.random() > 0.5) {
+      chirp(600, 900, 0.1, 0.05 + Math.random() * 0.1);
+    }
+
+    // Occasional extra quick double-chirp
+    if (Math.random() > 0.7) {
+      chirp(900, 1400, 0.12, 0.15 + Math.random() * 0.1);
+    }
+
+    const next = 500 + Math.random() * 1500;
+    const t = setTimeout(scheduleChirps, next);
+    timers.push(t);
+  }
+
+  scheduleChirps();
+  return { source: { stop() {} }, gain: masterGain, _timers: timers };
 }
 
 function startBeach(ctx, gain) {
@@ -356,9 +370,9 @@ function startBgSound(type) {
   gain.gain.value = STATE.volume * 0.35;
   gain.connect(ctx.destination);
 
-  if (type === 'rain') {
-    const rain = startRainDrops(ctx, gain);
-    bgSound = { type, source: rain.source, gain: rain.gain, _timer: rain._timer };
+  if (type === 'birds') {
+    const birds = startBirds(ctx, gain);
+    bgSound = { type, source: birds.source, gain: birds.gain, _timers: birds._timers };
   } else if (type === 'beach') {
     const beach = startBeach(ctx, gain);
     bgSound = { type, source: beach.source, gain, filter: beach.filter, lfo: beach.lfo, lfoGain: beach.lfoGain, _timer: beach._timer };
@@ -389,7 +403,7 @@ function stopBgSound() {
   try {
     bgSound.source.stop();
     if (bgSound.lfo) bgSound.lfo.stop();
-    if (bgSound._timer) clearTimeout(bgSound._timer);
+    if (bgSound._timers) bgSound._timers.forEach(t => clearTimeout(t));
   } catch (e) { /* already stopped */ }
   bgSound = null;
 }
