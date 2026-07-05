@@ -74,8 +74,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100vh;
+  overflow: hidden;
   position: relative;
 }
 
@@ -115,8 +115,8 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
-  padding: 40px 24px;
+  gap: 16px;
+  padding: 16px 24px;
   width: 100%;
   max-width: 420px;
 }
@@ -125,7 +125,7 @@ main {
 .task-section {
   width: 100%;
   text-align: center;
-  min-height: 40px;
+  min-height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -133,11 +133,11 @@ main {
 
 .task-input {
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   font-weight: 500;
-  padding: 10px 16px;
+  padding: 6px 12px;
   width: 100%;
-  max-width: 320px;
+  max-width: 300px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
@@ -175,12 +175,12 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .timer-ring {
-  width: min(280px, 70vw);
-  height: min(280px, 70vw);
+  width: min(200px, 50vw);
+  height: min(200px, 50vw);
   border-radius: 50%;
   border: 3px solid var(--border);
   background: var(--surface);
@@ -196,7 +196,7 @@ main {
 
 .timer-text {
   font-family: var(--font-mono);
-  font-size: clamp(2.5rem, 10vw, 4rem);
+  font-size: clamp(2rem, 8vw, 3rem);
   font-weight: 300;
   letter-spacing: 2px;
   color: var(--text);
@@ -204,7 +204,7 @@ main {
 }
 
 .session-label {
-  font-size: 0.95rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: var(--accent);
   text-transform: uppercase;
@@ -215,16 +215,16 @@ main {
 /* === Controls === */
 .controls {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   width: 100%;
   justify-content: center;
 }
 
 .btn {
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 500;
-  padding: 12px 24px;
+  padding: 8px 18px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
@@ -235,7 +235,7 @@ main {
     transform 0.15s ease,
     box-shadow 0.15s ease;
   user-select: none;
-  min-width: 80px;
+  min-width: 70px;
 }
 
 .btn:hover {
@@ -263,7 +263,7 @@ main {
 /* === Duration Settings === */
 .duration-section {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   width: 100%;
   justify-content: center;
 }
@@ -272,11 +272,11 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 
 .duration-label {
-  font-size: 0.75rem;
+  font-size: 0.6rem;
   font-weight: 500;
   color: var(--text-secondary);
   text-transform: uppercase;
@@ -285,10 +285,10 @@ main {
 
 .duration-input {
   font-family: var(--font-mono);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 400;
-  padding: 8px 6px;
-  width: 64px;
+  padding: 5px 4px;
+  width: 56px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
@@ -311,18 +311,18 @@ main {
 /* === Theme Switcher === */
 .theme-switcher {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   background: var(--surface);
   border-radius: var(--radius-lg);
-  padding: 4px;
+  padding: 3px;
   border: 1px solid var(--border);
 }
 
 .theme-btn {
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 500;
-  padding: 8px 16px;
+  padding: 5px 10px;
   border: none;
   border-radius: calc(var(--radius-lg) - 4px);
   background: transparent;
@@ -348,8 +348,8 @@ main {
 .streak-section {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.9rem;
+  gap: 6px;
+  font-size: 0.8rem;
   color: var(--text-secondary);
 }
 
@@ -365,23 +365,23 @@ main {
 .sound-section {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .bg-sound-group {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   width: 100%;
   justify-content: center;
 }
 
 .bg-sound-btn {
   font-family: var(--font-body);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 500;
-  padding: 5px 10px;
+  padding: 3px 8px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: transparent;
@@ -409,8 +409,8 @@ main {
 }
 
 .btn-icon {
-  font-size: 1.2rem;
-  padding: 8px 12px;
+  font-size: 1rem;
+  padding: 6px 10px;
   min-width: unset;
   line-height: 1;
   border-radius: var(--radius);
@@ -419,11 +419,11 @@ main {
 .volume-slider {
   -webkit-appearance: none;
   appearance: none;
-  height: 4px;
+  height: 3px;
   border-radius: 2px;
   background: rgba(255, 255, 255, 0.12);
   outline: none;
-  width: 100px;
+  width: 80px;
 }
 
 .volume-slider::-webkit-slider-thumb {
