@@ -39,6 +39,7 @@ const durationFocus = document.getElementById('duration-focus');
 const durationShort = document.getElementById('duration-short');
 const durationLong = document.getElementById('duration-long');
 const bgSoundBtns = document.querySelectorAll('.bg-sound-btn');
+const btnMode = document.getElementById('btn-mode');
 
 /* === Format === */
 function formatTime(seconds) {
@@ -371,6 +372,25 @@ themeBtns.forEach(btn => {
   btn.addEventListener('click', () => setTheme(btn.dataset.theme));
 });
 
+/* === Dark / Light mode === */
+function setMode(mode) {
+  document.body.setAttribute('data-mode', mode);
+  btnMode.textContent = mode === 'light' ? '🌙' : '☀️';
+  localStorage.setItem('pomodoro-mode', mode);
+}
+
+function toggleMode() {
+  const current = document.body.getAttribute('data-mode');
+  setMode(current === 'light' ? 'dark' : 'light');
+}
+
+function loadMode() {
+  const saved = localStorage.getItem('pomodoro-mode');
+  setMode(saved || 'dark');
+}
+
+btnMode.addEventListener('click', toggleMode);
+
 /* === Event listeners === */
 btnStart.addEventListener('click', start);
 btnPause.addEventListener('click', pause);
@@ -391,6 +411,7 @@ volumeSlider.addEventListener('input', (e) => {
 
 /* === Init === */
 document.body.setAttribute('data-theme', 'focus');
+loadMode();
 loadStreak();
 updateDisplay();
 updateMuteButton();

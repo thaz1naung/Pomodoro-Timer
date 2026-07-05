@@ -16,11 +16,34 @@
   --text-secondary: #888;
   --accent: #e63946;
   --accent-glow: rgba(230, 57, 70, 0.15);
+  --border: rgba(255, 255, 255, 0.08);
   --font-body: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   --radius: 12px;
   --radius-lg: 20px;
   --transition-speed: 0.3s;
+}
+
+/* === Light Mode Variables === */
+[data-mode="light"] {
+  --bg: #f5f5f5;
+  --surface: #ffffff;
+  --text: #1a1a2e;
+  --text-secondary: #555;
+  --accent-glow: rgba(230, 57, 70, 0.08);
+  --border: rgba(0, 0, 0, 0.1);
+}
+
+[data-mode="light"][data-theme="focus"] {
+  --accent-glow: rgba(230, 57, 70, 0.08);
+}
+
+[data-mode="light"][data-theme="chill"] {
+  --accent-glow: rgba(69, 123, 157, 0.08);
+}
+
+[data-mode="light"][data-theme="deep"] {
+  --accent-glow: rgba(106, 5, 114, 0.08);
 }
 
 /* === Mood Theme Variables === */
@@ -115,7 +138,7 @@ main {
   padding: 10px 16px;
   width: 100%;
   max-width: 320px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
   color: var(--text);
@@ -159,7 +182,7 @@ main {
   width: min(280px, 70vw);
   height: min(280px, 70vw);
   border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, 0.08);
+  border: 3px solid var(--border);
   background: var(--surface);
   display: flex;
   align-items: center;
@@ -202,7 +225,7 @@ main {
   font-size: 0.9rem;
   font-weight: 500;
   padding: 12px 24px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
   color: var(--text);
@@ -266,7 +289,7 @@ main {
   font-weight: 400;
   padding: 8px 6px;
   width: 64px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
   color: var(--text);
@@ -292,7 +315,7 @@ main {
   background: var(--surface);
   border-radius: var(--radius-lg);
   padding: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
 }
 
 .theme-btn {
@@ -359,7 +382,7 @@ main {
   font-size: 0.7rem;
   font-weight: 500;
   padding: 5px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   background: transparent;
   color: var(--text-secondary);
@@ -442,7 +465,7 @@ main {
 
 .dialog {
   background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 32px;
   text-align: center;
