@@ -399,9 +399,20 @@ btnReset.addEventListener('click', reset);
 btnConfirm.addEventListener('click', confirmTransition);
 btnSkip.addEventListener('click', skipTransition);
 
+let savedVolume = STATE.volume;
+
 btnMute.addEventListener('click', () => {
   STATE.muted = !STATE.muted;
+  if (STATE.muted) {
+    savedVolume = STATE.volume;
+    STATE.volume = 0;
+    volumeSlider.value = 0;
+  } else {
+    STATE.volume = savedVolume;
+    volumeSlider.value = savedVolume * 100;
+  }
   updateMuteButton();
+  updateBgSoundVolume();
 });
 
 volumeSlider.addEventListener('input', (e) => {
