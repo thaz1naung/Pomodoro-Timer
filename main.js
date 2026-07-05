@@ -247,43 +247,48 @@ function createNoiseBuffer(ctx) {
 }
 
 function startRainDrops(ctx, gain) {
-  // Individual rain drops: schedule random short clicks with filtered noise
+  // Individual rain drops: each drop is its own short noise burst
   const masterGain = ctx.createGain();
   masterGain.gain.value = 1;
   masterGain.connect(gain);
 
-  const buf = createNoiseBuffer(ctx);
-  const baseSrc = ctx.createBufferSource();
-  baseSrc.buffer = buf;
-  baseSrc.loop = true;
-
-  const hipass = ctx.createBiquadFilter();
-  hipass.type = 'highpass';
-  hipass.frequency.value = 2000;
-  baseSrc.connect(hipass);
-
-  // Random gain modulation for individual drops
-  const dropGain = ctx.createGain();
-  dropGain.gain.value = 0;
-  hipass.connect(dropGain);
-  dropGain.connect(masterGain);
-
-  // Schedule random drops
-  let dropTimeout = null;
-  function scheduleDrop() {
+  function playDrop() {
     if (!bgSound || bgSound.type !== 'rain') return;
     const now = ctx.currentTime;
-    const dropDuration = 0.02 + Math.random() * 0.04;
-    const dropVol = 0.15 + Math.random() * 0.45;
-    dropGain.gain.setValueAtTime(0, now);
-    dropGain.gain.linearRampToValueAtTime(dropVol, now + dropDuration * 0.3);
-    dropGain.gain.exponentialRampToValueAtTime(0.001, now + dropDuration);
-    dropTimeout = setTimeout(scheduleDrop, 30 + Math.random() * 80);
+    const dropDur = 0.015 + Math.random() * 0.035;
+
+    // Short noise burst for this drop
+    const sr = ctx.sampleRate;
+    const len = Math.ceil(sr * dropDur);
+    const buf = ctx.createBuffer(1, len, sr);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+
+    // Filter to sound like a drop (bandpass)
+    const bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.value = 3000 + Math.random() * 3000;
+    bp.Q.value = 0.5 + Math.random();
+
+    const env = ctx.createGain();
+    const vol = 0.3 + Math.random() * 0.5;
+    env.gain.setValueAtTime(vol, now);
+    env.gain.exponentialRampToValueAtTime(0.001, now + dropDur);
+
+    src.connect(bp);
+    bp.connect(env);
+    env.connect(masterGain);
+    src.start(now);
+    src.stop(now + dropDur + 0.01);
+
+    setTimeout(playDrop, 20 + Math.random() * 70);
   }
 
-  baseSrc.start();
-  scheduleDrop();
-  return { source: baseSrc, gain: masterGain, _timer: dropTimeout };
+  playDrop();
+  return { source: { stop() {} }, gain: masterGain, _timer: null };
 }
 
 function startBeach(ctx, gain) {
