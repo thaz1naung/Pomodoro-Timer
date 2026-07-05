@@ -237,6 +237,54 @@ main {
   box-shadow: 0 4px 20px var(--accent-glow);
 }
 
+/* === Duration Settings === */
+.duration-section {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  justify-content: center;
+}
+
+.duration-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.duration-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.duration-input {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 400;
+  padding: 8px 6px;
+  width: 64px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  text-align: center;
+  outline: none;
+  transition: border-color var(--transition-speed) ease;
+  -moz-appearance: textfield;
+}
+
+.duration-input::-webkit-inner-spin-button,
+.duration-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+.duration-input:focus {
+  border-color: var(--accent);
+}
+
 /* === Theme Switcher === */
 .theme-switcher {
   display: flex;

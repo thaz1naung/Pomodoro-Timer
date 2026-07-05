@@ -35,6 +35,9 @@ const btnConfirm = document.getElementById('btn-confirm');
 const btnSkip = document.getElementById('btn-skip');
 const taskInput = document.getElementById('task-input');
 const taskLabel = document.getElementById('task-label');
+const durationFocus = document.getElementById('duration-focus');
+const durationShort = document.getElementById('duration-short');
+const durationLong = document.getElementById('duration-long');
 
 /* === Format === */
 function formatTime(seconds) {
@@ -99,8 +102,15 @@ function pause() {
   STATE.intervalId = null;
 }
 
+function applyDurations() {
+  DURATIONS.focus = parseInt(durationFocus.value) * 60;
+  DURATIONS.shortBreak = parseInt(durationShort.value) * 60;
+  DURATIONS.longBreak = parseInt(durationLong.value) * 60;
+}
+
 function reset() {
   pause();
+  applyDurations();
   STATE.timeLeft = DURATIONS[STATE.mode];
   STATE.totalTime = STATE.timeLeft;
   clearTaskLabel();
