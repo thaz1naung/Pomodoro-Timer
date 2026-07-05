@@ -79,6 +79,23 @@ function clearTaskLabel() {
   taskLabel.textContent = '';
 }
 
+/* === Notifications === */
+let notifPermission = 'default';
+
+function requestNotifPermission() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') {
+    Notification.requestPermission().then(p => { notifPermission = p; });
+  } else {
+    notifPermission = Notification.permission;
+  }
+}
+
+function notify(title, body) {
+  if (notifPermission !== 'granted' || document.hasFocus()) return;
+  new Notification(title, { body, icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🍅</text></svg>' });
+}
+
 /* === Timer core === */
 function tick() {
   if (STATE.timeLeft <= 0) return;
@@ -89,8 +106,14 @@ function tick() {
   }
 }
 
+let firstStart = true;
+
 function start() {
   if (STATE.isRunning) return;
+  if (firstStart) {
+    firstStart = false;
+    requestNotifPermission();
+  }
   STATE.isRunning = true;
   showTaskLabel();
   STATE.intervalId = setInterval(tick, 1000);
@@ -126,6 +149,7 @@ function setMode(mode) {
 function timerComplete() {
   pause();
   playChime();
+  notify('Timer complete', LABELS[STATE.mode] + ' session finished');
 
   if (STATE.mode === 'focus') {
     STATE.completedPomodoros++;
