@@ -38,6 +38,7 @@ const taskLabel = document.getElementById('task-label');
 const durationFocus = document.getElementById('duration-focus');
 const durationShort = document.getElementById('duration-short');
 const durationLong = document.getElementById('duration-long');
+const bgSoundBtns = document.querySelectorAll('.bg-sound-btn');
 
 /* === Format === */
 function formatTime(seconds) {
@@ -231,6 +232,110 @@ function playChime() {
   });
 }
 
+/* === Background Sound === */
+let bgSound = null; // { type, source, gain }
+
+function createNoiseBuffer(ctx) {
+  const bufferSize = ctx.sampleRate * 2;
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    data[i] = Math.random() * 2 - 1;
+  }
+  return buffer;
+}
+
+function createBrownNoise(ctx) {
+  const bufferSize = ctx.sampleRate * 2;
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  let lastOut = 0;
+  for (let i = 0; i < bufferSize; i++) {
+    const white = Math.random() * 2 - 1;
+    lastOut = (lastOut + 0.02 * white) / 1.02;
+    data[i] = lastOut * 3.5;
+  }
+  return buffer;
+}
+
+function startBgSound(type) {
+  stopBgSound();
+  const ctx = getAudioContext();
+  const gain = ctx.createGain();
+  gain.gain.value = STATE.volume * 0.35;
+  gain.connect(ctx.destination);
+
+  if (type === 'rain') {
+    const buf = createBrownNoise(ctx);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.loop = true;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 800;
+    src.connect(filter);
+    filter.connect(gain);
+    src.start();
+    bgSound = { type, source: src, gain, filter };
+  } else if (type === 'white') {
+    const buf = createNoiseBuffer(ctx);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.loop = true;
+    src.connect(gain);
+    src.start();
+    bgSound = { type, source: src, gain };
+  } else if (type === 'lofi') {
+    const buf = createNoiseBuffer(ctx);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.loop = true;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 400;
+    const lfo = ctx.createOscillator();
+    const lfoGain = ctx.createGain();
+    lfo.frequency.value = 0.15;
+    lfoGain.gain.value = 100;
+    lfo.connect(lfoGain);
+    lfoGain.connect(filter.frequency);
+    lfo.start();
+    src.connect(filter);
+    filter.connect(gain);
+    src.start();
+    bgSound = { type, source: src, gain, filter, lfo, lfoGain };
+  }
+}
+
+function stopBgSound() {
+  if (!bgSound) return;
+  try {
+    bgSound.source.stop();
+    if (bgSound.lfo) bgSound.lfo.stop();
+  } catch (e) { /* already stopped */ }
+  bgSound = null;
+}
+
+function toggleBgSound(type) {
+  if (bgSound && bgSound.type === type) {
+    stopBgSound();
+    bgSoundBtns.forEach(b => b.classList.toggle('active', false));
+  } else {
+    startBgSound(type);
+    bgSoundBtns.forEach(b => b.classList.toggle('active', b.dataset.sound === type));
+  }
+}
+
+function updateBgSoundVolume() {
+  if (bgSound) {
+    bgSound.gain.gain.value = STATE.volume * 0.35;
+  }
+}
+
+bgSoundBtns.forEach(btn => {
+  btn.addEventListener('click', () => toggleBgSound(btn.dataset.sound));
+});
+
 /* === Streak persistence === */
 function saveStreak() {
   const today = new Date().toISOString().split('T')[0];
@@ -281,6 +386,7 @@ btnMute.addEventListener('click', () => {
 
 volumeSlider.addEventListener('input', (e) => {
   STATE.volume = e.target.value / 100;
+  updateBgSoundVolume();
 });
 
 /* === Init === */
